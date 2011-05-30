@@ -22,7 +22,6 @@ var dtp_by_session_id = {};
  In order to effecienctly send packets we're going to use the Socket.IO library which seemlessly 
    integrates with express.  
 
-var websocket_server = io.listen(app); 
 
  Now that we have a web socket server, we need to create a handler for connection events. These 
    events represet a client connecting to our server 
@@ -63,3 +62,8 @@ websocket_server.on('connection', function(socket) {
     } );
 */
 app.listen(8000);
+var socket = io.listen(app); 
+socket.on('connection', function(client){ 
+    socket.on('message', function(message) { console.log('got message' + message);});
+    socket.on('disconnect', function(){ console.log('disconnected');});
+}); 
