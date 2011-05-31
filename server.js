@@ -10,23 +10,18 @@ app.configure(function(){
 		app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
 
-
-/* Before we go any further we must realize that each time a user connects we're going to want to 
-   them send them dtrace aggregation every second. We can do so using 'setInterval', but we must
-   keep track of both the intervals we set and the dtrace consumers that are created as we'll need 
-   them later when the client disconnects. 
-
 var interval_id_by_session_id = {};
 var dtp_by_session_id = {};
 
- In order to effecienctly send packets we're going to use the Socket.IO library which seemlessly 
-   integrates with express.  
-
-
- Now that we have a web socket server, we need to create a handler for connection events. These 
-   events represet a client connecting to our server 
-websocket_server.on('connection', function(socket) { 
-
+app.listen(8000);
+var socket = io.listen(app); 
+var count = 0;
+socket.on('connection', function(client){ 
+	setInterval(function(){
+		count++;
+		client.send('message ' + count + ':hello from the server');
+	},2000);
+}); 
     /* Like the web server object, we must also define handlers for various socket events that 
        will happen during the lifetime of the connection. These will define how we interact with
            the client. The first is a message event which occurs when the client sends something to
@@ -61,9 +56,3 @@ websocket_server.on('connection', function(socket) {
 
     } );
 */
-app.listen(8000);
-var socket = io.listen(app); 
-socket.on('connection', function(client){ 
-    socket.on('message', function(message) { console.log('got message' + message);});
-    socket.on('disconnect', function(){ console.log('disconnected');});
-}); 
